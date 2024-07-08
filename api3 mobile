@@ -1,0 +1,27 @@
+import requests
+
+def obtener_productos_desde_api(url):
+    try:
+        response = requests.get(url)
+        
+        response.raise_for_status()
+        
+        data = response.json()
+        
+        return data.get('products', [])
+    except requests.exceptions.RequestException as e:
+        print(f'Error al realizar la solicitud HTTP: {e}')
+        return []
+
+def mostrar_productos(productos):
+    for producto in productos:
+        nombre = producto.get('name')
+        precio = producto.get('price')
+        print(f'Producto: {nombre} - Precio: ${precio:.2f}')
+
+if __name__ == '__main__':
+    url = 'https://jsonkeeper.com/b/MX0A'
+    
+    productos = obtener_productos_desde_api(url)
+    
+    mostrar_productos(productos)
