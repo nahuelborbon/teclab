@@ -1,0 +1,102 @@
+---   Metodo ---
+
+# product.py
+
+import json
+
+class Product:
+    def __init__(self, id, name, description, price, currency, in_stock):
+        self.id = id
+        self.name = name
+        self.description = description
+        self.price = price
+        self.currency = currency
+        self.in_stock = in_stock
+
+    def __repr__(self):
+        return f"{self.name}: {self.price} {self.currency}"
+
+def display_products(products_json):
+    products = []
+    for item in products_json.get("products", []):
+        product = Product(
+            id=item["id"],
+            name=item["name"],
+            description=item["description"],
+            price=item["price"],
+            currency=item["currency"],
+            in_stock=item["in_stock"],
+        )
+        products.append(product)
+
+    if products:
+        for product in products:
+            print(product)
+    else:
+        print("No products available")
+
+
+---------------------
+
+--- Pruebas unitarias ---
+
+# test_product.py
+
+import unittest
+from io import StringIO
+import sys
+from product import display_products
+
+class TestProductDisplay(unittest.TestCase):
+
+    def test_display_products(self):
+        products_json = {
+            "products": [
+                {
+                    "id": 1,
+                    "name": "iPhone 13",
+                    "description": "The latest iPhone from Apple",
+                    "price": 999.99,
+                    "currency": "USD",
+                    "in_stock": True,
+                },
+                {
+                    "id": 2,
+                    "name": "Samsung Galaxy S21",
+                    "description": "The latest Samsung phone",
+                    "price": 899.99,
+                    "currency": "USD",
+                    "in_stock": True,
+                },
+            ]
+        }
+        
+        expected_output = "iPhone 13: 999.99 USD\nSamsung Galaxy S21: 899.99 USD\n"
+        
+        captured_output = StringIO()
+        sys.stdout = captured_output
+
+        display_products(products_json)
+        
+        sys.stdout = sys.__stdout__
+        
+        self.assertEqual(captured_output.getvalue(), expected_output)
+
+    def test_display_no_products(self):
+        products_json = {"products": []}
+        
+        expected_output = "No products available\n"
+        
+        captured_output = StringIO()
+        sys.stdout = captured_output
+
+        display_products(products_json)
+        
+        sys.stdout = sys.__stdout__
+        
+        self.assertEqual(captured_output.getvalue(), expected_output)
+
+if __name__ == "__main__":
+    unittest.main()
+
+
